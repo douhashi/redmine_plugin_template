@@ -2,7 +2,7 @@
   "name": "Redmine Plugin Development",
   "dockerComposeFile": "docker-compose.yml",
   "service": "redmine",
-  "workspaceFolder": "/workspace/redmine",
+  "workspaceFolder": "/workspace/src",
   "shutdownAction": "stopCompose",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
