@@ -72,6 +72,86 @@ end
 - Rails 7.x系
 - データベース（PostgreSQL, MySQL, SQLite3のいずれか）
 
+### DevContainer開発環境
+
+このプロジェクトはDevContainer（開発コンテナ）に対応しており、一貫性のある開発環境を提供します。
+
+#### ディレクトリ構成
+
+開発環境では以下のディレクトリ構成でRedmineとプラグインが配置されます：
+
+```
+/workspace/
+├── redmine/                     # Redmine本体（git clone）
+│   ├── app/
+│   ├── config/
+│   ├── plugins/
+│   │   └── {plugin_name}/       # シンボリックリンク → /workspace/src
+│   ├── public/
+│   ├── test/
+│   └── ...
+└── src/                         # このプラグインリポジトリ
+    ├── init.rb                  # プラグイン登録と設定
+    ├── app/                     # アプリケーションコード（MVCパターン）
+    │   ├── controllers/         # リクエスト処理とビジネスロジック
+    │   └── views/               # ユーザーインターフェーステンプレート
+    ├── config/                  # 設定ファイル
+    │   ├── locales/             # 国際化ファイル
+    │   │   ├── en.yml          # 英語翻訳
+    │   │   └── ja.yml          # 日本語翻訳
+    │   └── routes.rb           # URLルーティング定義
+    ├── docs/                    # 包括的な開発ガイド
+    ├── spec/                    # RSpecテストファイル
+    │   ├── controllers/         # コントローラーテスト
+    │   ├── models/             # モデルテスト
+    │   ├── system/             # 統合テスト
+    │   ├── spec_helper.rb      # RSpec設定
+    │   └── rails_helper.rb     # Rails用RSpec設定
+    ├── scripts/                 # 自動化とセットアップツール
+    │   └── setup_plugin.rb     # インタラクティブなプラグイン設定スクリプト
+    ├── CLAUDE.md               # プラグイン開発ガイド
+    └── README.md               # プロジェクト概要
+```
+
+#### 開発ワークフロー
+
+1. **DevContainer起動時の自動セットアップ**：
+   - `/workspace/redmine`にRedmine本体がクローンされます
+   - `/workspace/src`にこのプラグインの内容が配置されます
+   - `/workspace/redmine/plugins/{plugin_name}`にシンボリックリンクが作成されます
+
+2. **開発プロセス**：
+   - `/workspace/src`でプラグインコードを編集
+   - 変更は自動的にRedmine環境に反映される（シンボリックリンク経由）
+   - Redmineサーバーの再起動で変更を確認
+
+3. **テスト環境**：
+   ```bash
+   # Redmineディレクトリでの作業
+   cd /workspace/redmine
+   
+   # データベースセットアップ
+   bundle exec rake db:migrate
+   bundle exec rake redmine:plugins:migrate
+   
+   # テストデータ投入
+   bundle exec rake db:fixtures:load
+   
+   # 開発サーバー起動
+   bundle exec rails server
+   ```
+
+4. **プラグインテスト**：
+   ```bash
+   # プラグインディレクトリでのテスト
+   cd /workspace/src
+   bundle exec rspec
+   
+   # Redmineテスト環境での統合テスト
+   cd /workspace/redmine
+   bundle exec rake test:plugins:units PLUGIN={plugin_name}
+   ```
+
 ### プラグイン開発手順
 1. `plugins/your_plugin_name/`ディレクトリ作成
 2. `init.rb`でプラグイン登録
@@ -79,6 +159,221 @@ end
 4. MVC構造に従って機能実装
 5. テスト作成
 6. `rake redmine:plugins:migrate`でマイグレーション実行
+
+## テスト（RSpec）
+
+RedmineプラグインのテストにはRSpecを使用します。
+
+### テスト環境設定
+
+#### spec_helper.rb
+```ruby
+# spec/spec_helper.rb
+require 'rails_helper'
+
+RSpec.configure do |config|
+  config.use_transactional_fixtures = true
+  config.use_instantiated_fixtures = false
+  config.fixture_path = "#{::Rails.root}/test/fixtures"
+  
+  # プラグイン固有の設定
+  config.include ActiveSupport::Testing::Assertions
+  config.include Redmine::I18n
+end
+```
+
+#### rails_helper.rb
+```ruby
+# spec/rails_helper.rb
+ENV['RAILS_ENV'] ||= 'test'
+require File.expand_path('../config/environment', __dir__)
+require 'rspec/rails'
+
+# Redmineテスト環境の初期化
+ActiveRecord::Migration.maintain_test_schema!
+
+RSpec.configure do |config|
+  config.fixture_path = "#{::Rails.root}/test/fixtures"
+  config.use_transactional_fixtures = true
+  config.infer_spec_type_from_file_location!
+  config.filter_rails_from_backtrace!
+end
+```
+
+### テストの基本パターン
+
+#### モデルテスト
+```ruby
+# spec/models/your_model_spec.rb
+require 'rails_helper'
+
+RSpec.describe YourModel, type: :model do
+  let(:project) { Project.find(1) }
+  
+  describe "validations" do
+    it "requires name" do
+      model = YourModel.new
+      expect(model).not_to be_valid
+      expect(model.errors[:name]).to include("can't be blank")
+    end
+  end
+  
+  describe "associations" do
+    it "belongs to project" do
+      expect(subject).to belong_to(:project)
+    end
+  end
+  
+  describe "acts_as modules" do
+    it "acts as customizable" do
+      expect(YourModel.new).to respond_to(:custom_field_values)
+    end
+  end
+end
+```
+
+#### コントローラーテスト
+```ruby
+# spec/controllers/your_controller_spec.rb
+require 'rails_helper'
+
+RSpec.describe YourController, type: :controller do
+  fixtures :projects, :users, :roles, :members, :member_roles
+  
+  before do
+    User.current = User.find(2) # 管理者ユーザー
+    @project = Project.find(1)
+  end
+  
+  describe "GET #index" do
+    context "with permission" do
+      it "returns success" do
+        get :index, params: { project_id: @project.id }
+        expect(response).to have_http_status(:success)
+      end
+    end
+    
+    context "without permission" do
+      before do
+        User.current = User.find(7) # 権限のないユーザー
+      end
+      
+      it "returns forbidden" do
+        get :index, params: { project_id: @project.id }
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
+end
+```
+
+#### 統合テスト
+```ruby
+# spec/system/your_feature_spec.rb
+require 'rails_helper'
+
+RSpec.describe "YourFeature", type: :system do
+  fixtures :projects, :users, :roles, :members, :member_roles
+  
+  before do
+    login_as(User.find(2))
+  end
+  
+  it "allows user to create new item" do
+    visit project_path(Project.find(1))
+    click_link "Your Feature"
+    click_link "New Item"
+    
+    fill_in "Name", with: "Test Item"
+    click_button "Create"
+    
+    expect(page).to have_content("Item was successfully created")
+    expect(page).to have_content("Test Item")
+  end
+  
+  private
+  
+  def login_as(user)
+    visit signin_path
+    fill_in "username", with: user.login
+    fill_in "password", with: "admin"
+    click_button "Login"
+  end
+end
+```
+
+### フックのテスト
+```ruby
+# spec/lib/your_plugin_hook_listener_spec.rb
+require 'rails_helper'
+
+RSpec.describe YourPluginHookListener do
+  let(:listener) { YourPluginHookListener.instance }
+  let(:context) { { project: Project.find(1) } }
+  
+  describe "#view_issues_show_details_bottom" do
+    it "renders partial" do
+      result = listener.view_issues_show_details_bottom(context)
+      expect(result).to include("your_plugin_details")
+    end
+  end
+end
+```
+
+### ファクトリの使用
+```ruby
+# spec/factories/your_models.rb
+FactoryBot.define do
+  factory :your_model do
+    name { "Test Item" }
+    project { Project.find(1) }
+    
+    trait :with_custom_fields do
+      after(:create) do |item|
+        item.custom_field_values = { "1" => "Custom Value" }
+        item.save
+      end
+    end
+  end
+end
+
+# テストでの使用
+RSpec.describe YourModel do
+  let(:model) { create(:your_model) }
+  let(:model_with_cf) { create(:your_model, :with_custom_fields) }
+end
+```
+
+### テスト実行
+
+```bash
+# 全テスト実行
+bundle exec rspec
+
+# 特定のファイル実行
+bundle exec rspec spec/models/your_model_spec.rb
+
+# 特定の行のテスト実行
+bundle exec rspec spec/models/your_model_spec.rb:10
+
+# タグ指定実行
+bundle exec rspec --tag focus
+```
+
+### テストカバレッジ
+```ruby
+# Gemfileに追加
+group :test do
+  gem 'simplecov', require: false
+end
+
+# spec_helper.rbの先頭に追加
+require 'simplecov'
+SimpleCov.start 'rails' do
+  add_filter '/spec/'
+  add_filter '/config/'
+end
+```
 
 ## コーディング規則
 
