@@ -1,1 +1,1 @@
-# redmine_plugin_skelton
+# redmine_plugin_template

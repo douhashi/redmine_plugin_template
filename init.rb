@@ -1,15 +1,15 @@
-Redmine::Plugin.register :redmine_plugin_skelton do
-  name 'Redmine Plugin Skelton'
+Redmine::Plugin.register :redmine_plugin_template do
+  name 'Redmine Plugin Template'
   author 'Author Name'
-  description 'This is a skelton plugin for Redmine'
+  description 'This is a template plugin for Redmine'
   version '0.0.1'
-  url 'https://github.com/douhashi/redmine_plugin_skelton'
+  url 'https://github.com/douhashi/redmine_plugin_template'
   author_url 'https://github.com/douhashi'
 
-  project_module :redmine_plugin_skelton do
-    permission :view_skelton, { :skelton => [:index, :show] }, :public => true
-    permission :manage_skelton, { :skelton => [:new, :create, :edit, :update, :destroy] }
+  project_module :redmine_plugin_template do
+    permission :view_template, { :template => [:index, :show] }, :public => true
+    permission :manage_template, { :template => [:new, :create, :edit, :update, :destroy] }
   end
 
-  menu :project_menu, :skelton, { :controller => 'skelton', :action => 'index' }, :caption => 'Skelton', :after => :settings, :param => :project_id
+  menu :project_menu, :template, { :controller => 'template', :action => 'index' }, :caption => 'Template', :after => :settings, :param => :project_id
 end

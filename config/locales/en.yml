@@ -1,6 +1,6 @@
 en:
-  label_skelton: "Skelton"
-  label_skelton_plural: "Skeltons"
+  label_template: "Template"
+  label_template_plural: "Templates"
   label_new: "New"
-  permission_view_skelton: "View skelton"
-  permission_manage_skelton: "Manage skelton"
+  permission_view_template: "View template"
+  permission_manage_template: "Manage template"

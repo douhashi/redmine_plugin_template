@@ -1,16 +1,16 @@
-class SkeltonController < ApplicationController
+class TemplateController < ApplicationController
   before_action :find_project, :authorize, :except => [:index]
   
   def index
-    @skelton_items = []
+    @template_items = []
   end
 
   def show
-    @skelton_item = params[:id]
+    @template_item = params[:id]
   end
 
   def new
-    @skelton_item = {}
+    @template_item = {}
   end
 
   def create
@@ -18,7 +18,7 @@ class SkeltonController < ApplicationController
   end
 
   def edit
-    @skelton_item = params[:id]
+    @template_item = params[:id]
   end
 
   def update

@@ -1,0 +1,13 @@
+<div class="contextual">
+  <%= link_to l(:button_edit), {:action => 'edit', :id => @template_item}, :class => 'icon icon-edit' if User.current.allowed_to?(:manage_template, @project) %>
+  <%= link_to l(:button_delete), {:action => 'destroy', :id => @template_item}, :method => :delete, :class => 'icon icon-del', :confirm => l(:text_are_you_sure) if User.current.allowed_to?(:manage_template, @project) %>
+</div>
+
+<h2><%=l(:label_template)%> #<%= @template_item %></h2>
+
+<div class="box">
+  <p><strong><%=l(:field_name)%>:</strong> Sample Item</p>
+  <p><strong><%=l(:field_description)%>:</strong> This is a sample template item</p>
+</div>
+
+<%= link_to l(:label_template_plural), {:action => 'index'} %>
