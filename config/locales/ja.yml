@@ -1,6 +1,1 @@
 ja:
-  label_template: "テンプレート"
-  label_template_plural: "テンプレート"
-  label_new: "新規"
-  permission_view_template: "テンプレートの閲覧"
-  permission_manage_template: "テンプレートの管理"
