@@ -1,187 +1,142 @@
-# Redmine Plugin Template Repository
+# Redmine プラグインテンプレートリポジトリ
 
-A ready-to-use template repository for creating new Redmine plugins with modern development practices and comprehensive tooling.
+モダンな開発手法と包括的なツールセットを備えた、新しいRedmineプラグイン作成のためのすぐに使えるテンプレートリポジトリです。
 
-## Overview
+## 概要
 
-This template repository provides a complete development environment and scaffolding for Redmine plugin creation. Use this as a starting point to generate new plugin repositories with:
+このテンプレートリポジトリは、Redmineプラグイン作成のための完全な開発環境と骨組みを提供します。新しいプラグインリポジトリの出発点として活用することで、以下が得られます：
 
-- **Pre-configured Plugin Structure** - Standard Redmine plugin architecture with MVC pattern
-- **Complete Development Environment** - Everything needed to start plugin development immediately
-- **Best Practices Implementation** - Security, internationalization, and Redmine integration patterns
-- **Comprehensive Documentation** - Detailed guides for plugin development workflows
-- **Automated Setup Tools** - Scripts to customize the template for your specific plugin
+- **完全な開発環境** - プラグイン開発をすぐに開始できるすべての要素
+- **包括的ドキュメント** - プラグイン開発ワークフローの詳細ガイド
 
-## What This Template Provides
+## はじめに
 
-### Development Environment
-- **Complete Plugin Structure** - Ready-to-use MVC architecture following Redmine conventions
-- **Sample Implementation** - Working CRUD operations to demonstrate best practices
-- **Permission Framework** - Pre-configured role-based access control system
-- **Internationalization Setup** - Multi-language support with English/Japanese examples
-- **UI Integration** - Standard Redmine interface components and styling
+### このテンプレートから新しいプラグインを作成する
 
-### Development Tools
-- **Quick Setup Script** - `scripts/update_plugin_info.rb` for rapid plugin customization
-- **Documentation Template** - Comprehensive guides in the `docs/` directory
-- **Configuration Examples** - Routes, controllers, views, and localization files
-- **Security Patterns** - Proper authorization and validation implementations
-
-## Getting Started
-
-### Creating a New Plugin from This Template
-
-1. **Use this template** to create a new repository:
-   - Click "Use this template" on GitHub, or
-   - Clone and create a new repository from this codebase
-
-2. **Customize your plugin** using the setup script:
+1. **このテンプレートを使用**して新しいリポジトリを作成：
+   - GitHubで「Use this template」をクリック、または
+   - このコードベースをクローンして新しいリポジトリを作成
+2. **セットアップスクリプトを実行**してプラグインを設定する：
 ```bash
-ruby scripts/update_plugin_info.rb
+ruby scripts/setup_plugin.rb
 ```
 
-3. **Install in your Redmine development environment**:
-```bash
-cd [REDMINE_ROOT]/plugins
-git clone [YOUR_NEW_PLUGIN_REPOSITORY] your_plugin_name
-cd [REDMINE_ROOT]
-bundle exec rake redmine:plugins:migrate RAILS_ENV=development
+このスクリプトでは以下の入力が求められます：
+- プラグインID（内部識別用）
+- プラグイン名と説明
+- 作成者情報とURL
+- バージョン番号
+
+## テンプレート構造
+
+### ファイル構成
+```
+├── init.rb                      # プラグイン登録と設定
+├── app/                         # アプリケーションコード（MVCパターン）
+│   ├── controllers/             # リクエスト処理とビジネスロジック
+│   └── views/                   # ユーザーインターフェーステンプレート
+├── config/                      # 設定ファイル
+│   ├── locales/                 # 国際化ファイル
+│   └── routes.rb                # URLルーティング定義
+├── docs/                        # 包括的な開発ガイド
+├── scripts/                     # 自動化とセットアップツール
+│   └── setup_plugin.rb          # インタラクティブなプラグイン設定スクリプト
+├── README.md                    # 英語ドキュメント
+└── README.ja.md                 # 日本語ドキュメント
 ```
 
-4. **Start development**:
-   - Restart Redmine
-   - Enable your plugin in Administration > Plugins
-   - Begin customizing the sample code for your needs
+## 付属ドキュメント
 
-### Template Testing
-To test this template as-is in your development environment:
-1. Follow the installation steps above
-2. Enable the "Redmine Plugin Template" module in a project
-3. Configure permissions and explore the sample template management features
+このテンプレートには`docs/`ディレクトリに広範囲な開発ドキュメントが含まれています：
 
-## Template Customization
+### コアガイド
+- **[docs/README.md](./docs/README.md)** - 完全なドキュメント索引とナビゲーション
+- **[docs/plugin-development/basic-structure.md](./docs/plugin-development/basic-structure.md)** - プラグインアーキテクチャとファイル構成
+- **[docs/core-architecture/models.md](./docs/core-architecture/models.md)** - Redmineの内部構造とパターン
 
-### Automated Setup (Recommended)
-The included setup script streamlines the customization process:
-```bash
-ruby scripts/update_plugin_info.rb
+### 高度なトピック
+- **[docs/hooks-and-events/overview.md](./docs/hooks-and-events/overview.md)** - 拡張ポイントとイベントシステム
+- **[docs/examples/basic-plugin.md](./docs/examples/basic-plugin.md)** - 完全な実装ウォークスルー
+
+### 学習リソース
+- 詳細なコメント付きの動作サンプルコード
+- 一般的なプラグインパターンとアンチパターン
+- Redmineの既存機能との統合
+- セキュリティとパフォーマンスの考慮事項
+
+## 環境要件
+
+**対応Redmineバージョン：**
+- Redmine 6.0以降のバージョン
+- Ruby 3.2、3.3、または3.4
+- Rails 7.x系
+
+**開発環境：**
+- バージョン管理用Git
+- Ruby対応のテキストエディターまたはIDE
+- テスト用ローカルRedmineインストール
+
+## DevContainer開発環境
+
+このテンプレートはDevContainer（開発コンテナ）に対応しており、一貫性のある開発環境を提供します。
+
+### DevContainer構成
+
+開発環境では以下のディレクトリ構成でRedmineとプラグインが配置されます：
+
+```
+/workspace/
+├── redmine/                     # Redmine本体（git clone）
+│   ├── app/
+│   ├── plugins/
+│   │   └── {plugin_name}/       # シンボリックリンク → /workspace/src
+│   └── ...
+└── src/                         # このプラグインリポジトリ
+    ├── init.rb
+    ├── app/
+    ├── config/
+    └── ...
 ```
 
-**What the script updates:**
-- Plugin ID and display name
-- Author and contact information
-- Version numbers and URLs
-- File and class names throughout the codebase
-- Internationalization keys and labels
+### 開発ワークフロー
 
-### Manual Customization Options
-For advanced customization, modify these key files:
+1. **DevContainer起動時の自動セットアップ**：
+   - `/workspace/redmine`にRedmine本体がクローンされます
+   - `/workspace/src`にこのプラグインの内容が配置されます
+   - `/workspace/redmine/plugins/{plugin_name}`にシンボリックリンクが作成されます
 
-1. **Core Plugin Configuration** (`init.rb`)
-   - Plugin metadata and identification
-   - Permission definitions and menu structure
-   - Module registration
+2. **開発プロセス**：
+   - `/workspace/src`でプラグインコードを編集
+   - 変更は自動的にRedmine環境に反映される（シンボリックリンク経由）
+   - Redmineサーバーの再起動で変更を確認
 
-2. **Application Logic** (`app/` directory)
-   - Controllers: Business logic and request handling
-   - Views: User interface templates and forms
-   - Models: Data structures (when needed)
+## テンプレートの保守
 
-3. **Configuration** (`config/` directory)
-   - Routes: URL patterns and routing rules
-   - Locales: Multi-language translations and labels
+### テンプレートへの貢献
 
-4. **Documentation** (`docs/` directory)
-   - Plugin-specific documentation
-   - API documentation and usage guides
+Redmineコミュニティのためにこのテンプレートの改善をサポート：
 
-## Template Structure
+1. **テンプレート改善**: テンプレート拡張のためにこのリポジトリをフォーク
+2. **ドキュメント更新**: ガイドと例の改善を提出
+3. **バグ報告**: テンプレート構造やセットアップツールの問題を報告
+4. **機能要求**: 含めるべき追加ツールやパターンを提案
 
-### File Organization
-```
-├── init.rb                      # Plugin registration and configuration
-├── app/                         # Application code (MVC pattern)
-│   ├── controllers/             # Request handling and business logic
-│   └── views/                   # User interface templates
-├── config/                      # Configuration files
-│   ├── locales/                 # Internationalization files
-│   └── routes.rb                # URL routing definitions
-├── docs/                        # Comprehensive development guides
-├── scripts/                     # Automation and setup tools
-├── README.md                    # English documentation
-└── README.ja.md                 # Japanese documentation
-```
+### ヘルプの取得
+- **テンプレートの問題**: [GitHub Issues](https://github.com/douhashi/redmine_plugin_template/issues)
+- **プラグイン開発**: 包括的な`docs/`ディレクトリを参照
+- **Redmineコミュニティ**: 公式Redmineフォーラムとドキュメント
 
-### Built-in Best Practices
-- **Security Framework**: Authorization patterns and input validation
-- **Redmine Integration**: Standard UI components and helper usage
-- **Performance Patterns**: Efficient database queries and caching strategies
-- **Error Handling**: Graceful degradation and user-friendly error messages
-- **Testing Foundation**: Structure ready for unit and integration tests
+## ライセンス
 
-### Development Workflow Support
-- **Rapid Prototyping**: Working sample code to modify and extend
-- **Documentation Templates**: Structured guides for common plugin scenarios
-- **Internationalization**: Complete i18n implementation with fallback mechanisms
-- **Version Management**: Proper plugin versioning and update patterns
+このテンプレートはMITライセンスで提供されています。詳細は[LICENSE](LICENSE)をご覧ください。
 
-## Included Documentation
+このテンプレートからプラグインを作成する場合、以下が自由にできます：
+- プラグインに任意のライセンスを使用
+- テンプレートの帰属を変更または削除
+- プラグインを商用またはオープンソースとして配布
 
-This template includes extensive development documentation in the `docs/` directory:
-
-### Core Guides
-- **[docs/README.md](./docs/README.md)** - Complete documentation index and navigation
-- **[docs/plugin-development/basic-structure.md](./docs/plugin-development/basic-structure.md)** - Plugin architecture and file organization
-- **[docs/core-architecture/models.md](./docs/core-architecture/models.md)** - Redmine's internal structure and patterns
-
-### Advanced Topics
-- **[docs/hooks-and-events/overview.md](./docs/hooks-and-events/overview.md)** - Extension points and event system
-- **[docs/examples/basic-plugin.md](./docs/examples/basic-plugin.md)** - Complete implementation walkthroughs
-
-### Learning Resources
-- Working sample code with detailed comments
-- Common plugin patterns and anti-patterns
-- Integration with Redmine's existing functionality
-- Security and performance considerations
-
-## Environment Requirements
-
-**Compatible Redmine Versions:**
-- Redmine 5.0 and later versions
-- Ruby 3.2, 3.3, or 3.4
-- Rails 7.x series
-
-**Development Environment:**
-- Git for version control
-- Text editor or IDE with Ruby support
-- Local Redmine installation for testing
-
-## Template Maintenance
-
-### Contributing to the Template
-Help improve this template for the Redmine community:
-
-1. **Template Improvements**: Fork this repository for template enhancements
-2. **Documentation Updates**: Submit improvements to guides and examples
-3. **Bug Reports**: Report issues with the template structure or setup tools
-4. **Feature Requests**: Suggest additional tools or patterns to include
-
-### Getting Help
-- **Template Issues**: [GitHub Issues](https://github.com/douhashi/redmine_plugin_template/issues)
-- **Plugin Development**: Consult the comprehensive `docs/` directory
-- **Redmine Community**: Official Redmine forums and documentation
-
-## License
-
-This template is provided under the MIT License. See [LICENSE](LICENSE) for full details.
-
-When you create a plugin from this template, you're free to:
-- Use any license for your plugin
-- Modify or remove the template attribution
-- Distribute your plugin commercially or as open source
-
-## Template Author
+## テンプレート作成者
 
 **Sho DOUHASHI**
 - GitHub: [@douhashi](https://github.com/douhashi)
-- Template Repository: [redmine_plugin_template](https://github.com/douhashi/redmine_plugin_template)
+- テンプレートリポジトリ: [redmine_plugin_template](https://github.com/douhashi/redmine_plugin_template)
