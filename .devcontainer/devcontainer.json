@@ -1,0 +1,27 @@
+{
+  "name": "Redmine Plugin Development",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "redmine",
+  "workspaceFolder": "/workspace/redmine",
+  "shutdownAction": "stopCompose",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+      ]
+    }
+  },
+  "remoteUser": "redmine",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Redmine"
+    }
+  },
+  "postCreateCommand": "/workspace/src/.devcontainer/postCreateCommand.sh"
+}

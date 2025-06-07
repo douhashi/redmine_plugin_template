@@ -1,0 +1,19 @@
+services:
+  redmine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspace/src:cached
+    ports:
+      - "3000:3000"
+    environment:
+      - RAILS_ENV=development
+    working_dir: /opt/redmine
+    command: sleep infinity
+
+volumes:
+  redmine_db:
+  redmine_files:
+  redmine_plugins:
+  redmine_themes:

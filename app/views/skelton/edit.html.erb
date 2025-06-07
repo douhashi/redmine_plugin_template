@@ -1,0 +1,17 @@
+<h2><%=l(:button_edit)%> <%=l(:label_skelton)%></h2>
+
+<%= form_tag({:action => 'update', :id => @skelton_item}, :multipart => true) do %>
+  <div class="box tabular">
+    <p>
+      <label for="name"><%=l(:field_name)%> <span class="required">*</span></label>
+      <%= text_field_tag 'name', 'Sample Item', :size => 60, :required => true %>
+    </p>
+    <p>
+      <label for="description"><%=l(:field_description)%></label>
+      <%= text_area_tag 'description', 'This is a sample skelton item', :rows => 5, :cols => 60 %>
+    </p>
+  </div>
+
+  <%= submit_tag l(:button_save) %>
+  <%= link_to l(:button_cancel), {:action => 'show', :id => @skelton_item} %>
+<% end %>
