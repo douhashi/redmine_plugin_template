@@ -3,26 +3,27 @@
 
 require 'fileutils'
 
-class PluginInfoUpdater
+class PluginSetup
   INIT_RB_PATH = File.join(File.dirname(__dir__), 'init.rb')
   
   def initialize
     @fields = {
-      name: 'プラグイン名',
-      author: '作成者名',
-      description: '説明',
-      version: 'バージョン',
-      url: 'プロジェクトURL',
-      author_url: '作成者URL'
+      plugin_id: 'Plugin ID (e.g., my_awesome_plugin)',
+      name: 'Plugin Name',
+      author: 'Author Name',
+      description: 'Description',
+      version: 'Version',
+      url: 'Project URL',
+      author_url: 'Author URL'
     }
   end
 
   def run
-    puts "Redmineプラグイン情報更新スクリプト"
+    puts "Redmine Plugin Setup Script"
     puts "=" * 40
     
     unless File.exist?(INIT_RB_PATH)
-      puts "エラー: #{INIT_RB_PATH} が見つかりません。"
+      puts "Error: #{INIT_RB_PATH} not found."
       exit 1
     end
 
@@ -31,9 +32,9 @@ class PluginInfoUpdater
     
     if confirm_update(new_values)
       update_init_rb(new_values)
-      puts "\n✅ #{INIT_RB_PATH} を更新しました！"
+      puts "\n✅ #{INIT_RB_PATH} updated successfully!"
     else
-      puts "\n❌ 更新をキャンセルしました。"
+      puts "\n❌ Update cancelled."
     end
   end
 
@@ -43,7 +44,14 @@ class PluginInfoUpdater
     content = File.read(INIT_RB_PATH)
     values = {}
     
+    # Extract plugin ID
+    plugin_id_pattern = /Redmine::Plugin\.register\s+:(\w+)/
+    plugin_id_match = content.match(plugin_id_pattern)
+    values[:plugin_id] = plugin_id_match ? plugin_id_match[1] : 'redmine_plugin_template'
+    
+    # Extract other fields
     @fields.keys.each do |field|
+      next if field == :plugin_id
       pattern = /#{field}\s+['"]([^'"]*)['"]/
       match = content.match(pattern)
       values[field] = match ? match[1] : ''
@@ -55,7 +63,7 @@ class PluginInfoUpdater
   def collect_new_values(current_values)
     new_values = {}
     
-    puts "\n現在の値が表示されます。変更しない場合はEnterを押してください。\n\n"
+    puts "\nCurrent values are shown. Press Enter to keep unchanged.\n\n"
     
     @fields.each do |key, label|
       current = current_values[key] || ''
@@ -69,14 +77,14 @@ class PluginInfoUpdater
   end
 
   def confirm_update(new_values)
-    puts "\n更新内容の確認:"
+    puts "\nConfirm update:"
     puts "-" * 30
     
     @fields.each do |key, label|
       puts "#{label}: #{new_values[key]}"
     end
     
-    puts "\nこの内容で更新してよろしいですか？ (y/N): "
+    puts "\nProceed with this update? (y/N): "
     response = gets.chomp.downcase
     ['y', 'yes'].include?(response)
   end
@@ -84,23 +92,29 @@ class PluginInfoUpdater
   def update_init_rb(new_values)
     content = File.read(INIT_RB_PATH)
     
+    # Update plugin ID
+    plugin_id_pattern = /(Redmine::Plugin\.register\s+:)(\w+)/
+    content.gsub!(plugin_id_pattern, "\\1#{new_values[:plugin_id]}")
+    
+    # Update other fields
     @fields.keys.each do |field|
+      next if field == :plugin_id
       pattern = /(#{field}\s+['"])([^'"]*)(['"])/
       content.gsub!(pattern, "\\1#{new_values[field]}\\3")
     end
     
-    # バックアップ作成
+    # Create backup
     backup_path = "#{INIT_RB_PATH}.backup.#{Time.now.strftime('%Y%m%d_%H%M%S')}"
     FileUtils.cp(INIT_RB_PATH, backup_path)
-    puts "バックアップを作成しました: #{backup_path}"
+    puts "Backup created: #{backup_path}"
     
-    # ファイル更新
+    # Update file
     File.write(INIT_RB_PATH, content)
   end
 end
 
-# スクリプト実行
+# Script execution
 if __FILE__ == $0
-  updater = PluginInfoUpdater.new
-  updater.run
+  setup = PluginSetup.new
+  setup.run
 end
