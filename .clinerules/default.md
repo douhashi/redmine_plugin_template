@@ -192,13 +192,13 @@ AIはこれらのステップを自動的に判断して進め、1回のリク�
   - 実装完了後、テスト計画に従ってテストを実行
   - パスしなかった場合はパスするまで修正をしてください
 
-  bin/rspec
+  cd /workspace/redmine && bundle exec rspec
 
 4. フルテストの実行
   - 実装部分のテストが完了したら、フルテストを実行し、全体のテストがパスするかを確認
   - パスしなかった場合はパスするまで修正をしてください
 
-  bin/rails spec
+  cd /workspace/redmine && bundle exec rspec
 
 5. 変更のプッシュ
   git push origin <ブランチ名>
@@ -327,30 +327,10 @@ fixes #<issue番号>
 • Fat Model, Skinny Controllerの原則を守る
 • 複雑なロジックはサービスオブジェクトに抽出する
 
-### ViewComponent
+### Redmine
 
-• コンポーネントは単一責任の原則に従う
-• 再利用可能なコンポーネントを設計する
-• プレビューは全てのコンポーネントに用意する
-• コンポーネントのスタイリングは同コンポーネント内に閉じる
-• ViewComponentの作成には必ずgeneratorを利用する：
-  bin/rails g view_component ComponentName [attributes]
-
-• コンポーネント作成前に  docs/component-guidelines.md  を参照し、設計ガイドラインに従う
-
-### JavaScript (Stimulus)
-
-• コントローラーは単一責任の原則に従う
-• データ属性を適切に活用する
-• Turboと連携したインタラクションを設計する
-• グローバル変数の使用は避ける
-
-### CSS (Tailwind)
-
-• Tailwindのユーティリティクラスを基本として使用する
-• コンポーネント間で一貫したデザイントークンを使用する
-• レスポンシブデザインはTailwindのブレークポイントを使用する
-• カスタムCSSクラスは最小限に抑える
+- Redmineに関するドキュメントは docs 以下にある
+- (docs/README.md)[../docs/README.md] に目次があるので、参照して適宜必要な情報を探索すること
 
 ### テスト
 
