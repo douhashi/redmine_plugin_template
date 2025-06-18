@@ -14,6 +14,12 @@ fi
 ln -sf "/workspace/src/Gemfile.local" "/workspace/redmine/Gemfile.local"
 echo "Created symlink: /workspace/src/Gemfile.local -> /workspace/redmine/Gemfile.local"
 
+ln -sf "/workspace/src/.rspec" "/workspace/redmine/.rspec"
+echo "Created symlink: /workspace/src/.rspec -> /workspace/redmine/.rspec"
+
+ln -sf "/workspace/src/spec_helper.rb" "/workspace/redmine/spec_helper.rb"
+echo "Created symlink: /workspace/src/spec_helper.rb -> /workspace/redmine/spec_helper.rb"
+
 cd /workspace/redmine
 bundle install
 
