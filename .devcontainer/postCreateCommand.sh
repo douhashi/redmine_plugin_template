@@ -10,14 +10,15 @@ if [ -z "$REPO_NAME" ]; then
     REPO_NAME=$(basename "$PWD")
 fi
 
-# Create symlink
-ln -sf "$PWD" "/workspace/redmine/plugins/$REPO_NAME"
-echo "Created symlink: $PWD -> /workspace/redmine/plugins/$REPO_NAME"
 
-ln -sf "$PWD/Gemfile.local" "/workspace/redmine/Gemfile.local"
-echo "Created symlink: $PWD/Gemfile.local -> /workspace/redmine/Gemfile.local"
+ln -sf "/workspace/src/Gemfile.local" "/workspace/redmine/Gemfile.local"
+echo "Created symlink: /workspace/src/Gemfile.local -> /workspace/redmine/Gemfile.local"
 
 cd /workspace/redmine
-
 bundle install
+
+# Create symlink
+ln -sf "/workspace/src" "/workspace/redmine/plugins/$REPO_NAME"
+echo "Created symlink: /workspace/src -> /workspace/redmine/plugins/$REPO_NAME"
+
 bin/rails db:setup

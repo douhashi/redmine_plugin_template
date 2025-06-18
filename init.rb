@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Redmine::Plugin.register :redmine_plugin_template do
   name 'Redmine Plugin Template'
   author 'Sho DOUHASHI'
